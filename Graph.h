@@ -23,7 +23,7 @@ public:
     Graph() {}
     void addAdjecnt(const string& nameA, const vector<string>& roadA, const string& nameB, const vector<string>& roadB, weight w); //增加邻边 若没有点a/b则创建点a/b
     void print_path(); //打印路径 (road,name) -> (road,name) -> ....
-    void dijkstra(string source, string destination);    
+    void dijkstra(const string& source, const string& destination);    
 private:
     int number_of_vertex;
     map<string, Vertex> vertex_list;

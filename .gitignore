@@ -1,0 +1,4 @@
+## ignore temp files
+a.out
+test.cpp
+/.vscode
