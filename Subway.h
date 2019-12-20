@@ -33,6 +33,7 @@ public:
 public:
     Subway(){ initialize(); }
     void printPath(const string& source, const string& destination) const;
+    bool contains(const string& name) const; //查询是否含有此条站点
 
 #ifndef DEBUG
 private:
@@ -167,6 +168,12 @@ void Subway::printPath(const string& source, const string& destination) const
     }
     newGraph.dijkstra(source, destination);
     newGraph.print_path();
+}
+
+bool Subway::contains(const string& name) const
+{
+    auto it = whichRoute.find(name);
+    return !(it == whichRoute.end());
 }
 
 #endif
