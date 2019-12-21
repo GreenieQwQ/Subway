@@ -64,10 +64,10 @@ enum STATE { CLEAR, DATA_ERROR };
 int main()
 {
     //初始化
-    ifstream in("data.txt", ios::in); //读取数据
+    ifstream in("data.dat", ios::in); //读取数据
     if(!in)
     {
-        cerr << "初始化失败，找不到地铁数据文件data.txt\n";
+        cerr << "初始化失败，找不到地铁数据文件 'data.dat'。\n";
         return DATA_ERROR;
     }
     Subway s(in);
