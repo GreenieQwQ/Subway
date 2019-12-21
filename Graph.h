@@ -13,8 +13,14 @@
 
 using namespace std;
 
-typedef int weight;
-typedef pair<string, weight> edge;
+typedef size_t weight;
+
+struct edge
+{
+    string name;
+    string route;
+    weight length;
+};
 
 class Vertex
 {
@@ -31,8 +37,8 @@ class Graph
 {
 public:
     Graph() {}
-    void addAdjecnt(const string& nameA, const vector<string>& roadA, const string& nameB, const vector<string>& roadB, weight w); //增加邻边 若没有点a/b则创建点a/b
-    weight print_path(const string& source, const string& destination); //打印路径 (road,name) -> (road,name) -> ....
+    void addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route); //增加邻边 若没有点a/b则创建点a/b
+    size_t print_path(const string& source, const string& destination); //打印路径 (road,name) -> (road,name) -> ....
     //void dijkstra(const string& source, const string& destination);    
 private:
     int number_of_vertex;
