@@ -44,12 +44,16 @@ weight Graph::print_path(const string& source, const string& destination)
         path.push(vertex_list[temp].path);
         temp = path.top().first;
     }
+    cout<<"(src,"<<source<<")"<<" -> ";
+    temp = path.top().second;
+    path.pop();
     while(path.size()!=0)
     {
-        cout<<"("<<path.top().first<<","<<path.top().second<<")"<<" -> ";
+        cout<<"("<<temp<<","<<path.top().first<<")"<<" -> ";
+        temp = path.top().second;
         path.pop();
     }
-    cout<<"(des,"<<destination<<")"<<endl;
+    cout<<"("<<temp<<","<<destination<<")"<<endl;
     return vertex_list[destination].distance;
 }
 
