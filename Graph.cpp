@@ -2,35 +2,35 @@
 #define GRAPH_CPP
 #include "Graph.h"
 
-void Graph::addAdjecnt(const string& nameA, const vector<string>& roadA, const string& nameB, const vector<string>& roadB, weight w)
+void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route)
 {
     auto x = vertex_list.find(nameA);
     if(x==vertex_list.end())
     {
         Vertex temp;
         temp.name = nameA;
-        temp.road = roadA;
-        temp.adjcentList.push_back(edge(nameB, w));
+        //temp.road = roadA;
+        temp.adjcentList.push_back(edge(nameB, route, w));
         vertex_list.insert(pair<string, Vertex>(nameA, temp));
         number_of_vertex++;
     }
     else
     {
-        (*x).second.adjcentList.push_back(edge(nameB, w));
+        (*x).second.adjcentList.push_back(edge(nameB, route, w));
     }
     x = vertex_list.find(nameB);
     if(x==vertex_list.end())
     {
         Vertex temp;
         temp.name = nameB;
-        temp.road = roadB;
-        temp.adjcentList.push_back(edge(nameA, w));
+        //temp.road = roadB;
+        temp.adjcentList.push_back(edge(nameA, route, w));
         vertex_list.insert(pair<string, Vertex>(nameB, temp));
         number_of_vertex++;
     }
     else
     {
-        (*x).second.adjcentList.push_back(edge(nameA, w));
+        (*x).second.adjcentList.push_back(edge(nameA, route, w));
     }
 }
 
@@ -39,7 +39,6 @@ weight Graph::print_path(const string& source, const string& destination)
     dijkstra(source, destination);
     stack<pair<string, string>> path;
     string temp = destination;
-    string temp1;
     while(temp != source)
     {
         path.push(vertex_list[temp].path);
@@ -47,12 +46,10 @@ weight Graph::print_path(const string& source, const string& destination)
     }
     while(path.size()!=0)
     {
-        cout<<"("<<path.top().second<<","<<path.top().first<<")"<<" -> ";
+        cout<<"("<<path.top().first<<","<<path.top().second<<")"<<" -> ";
         path.pop();
-        if(path.size()==1)
-            temp1 = path.top().second;
     }
-    cout<<"("<<temp1<<","<<destination<<")"<<endl;
+    cout<<"(des,"<<destination<<")"<<endl;
     return vertex_list[destination].distance;
 }
 
@@ -112,18 +109,19 @@ void inline Graph::updata_info(const string& min_name, int& count)
     auto &y = vertex_list[min_name];
     for(auto x: y.adjcentList)
     {
-        auto &z  = vertex_list[x.first];
+        auto &z  = vertex_list[x.name];
         if(z.label == false)
         {
-            if(y.distance + x.second < z.distance || z.distance == INFINITE)
+            if(y.distance + x.length < z.distance || z.distance == INFINITE)
             {
                 string temp;
-                z.distance = y.distance + x.second;
-                for(auto road1: z.road)
+                z.distance = y.distance + x.length;
+                /*for(auto road1: z.road)
                 {
                     if(find(y.road.begin(), y.road.end(), road1) != y.road.end())
                         temp = road1;
-                }
+                }*/
+                temp = x.route;
                 z.path = pair<string, string>(min_name, temp);
             }
             count++;
