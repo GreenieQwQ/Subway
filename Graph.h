@@ -20,13 +20,15 @@ struct edge
     string name;
     string route;
     weight length;
+    edge(const string& name1, const string& route1, const weight& length1):name(name1),route(route1),length(length1)
+    {}
 };
 
 class Vertex
 {
     public:
     string name;
-    vector<string> road; //所属线路
+    //vector<string> road; //所属线路
     list<edge> adjcentList;
     bool label;
     weight distance;
@@ -81,7 +83,6 @@ private:
         (*x).second.adjcentList.push_back(edge(nameA, w));
     }
 }
-
 weight Graph::print_path(const string& source, const string& destination)
 {
     dijkstra(source, destination);
@@ -103,7 +104,6 @@ weight Graph::print_path(const string& source, const string& destination)
     cout<<"("<<temp1<<","<<destination<<")"<<endl;
     return vertex_list[destination].distance;
 }
-
 void Graph::dijkstra(const string& source, const string& destination)
 {
     int count = 1;//记录点的数目;
@@ -122,10 +122,7 @@ void Graph::dijkstra(const string& source, const string& destination)
         updata_info(min_name, count);
     }
 }
-
-
 初始化
-
 void inline Graph::initial()
 {
     for(auto &x : vertex_list)
@@ -135,10 +132,7 @@ void inline Graph::initial()
         x.second.path.first.clear();
     }
 }
-
-
 找最小的边
-
 void inline Graph::findsmallest(string & temp)
 {
     weight min = INFINITE;
@@ -150,10 +144,7 @@ void inline Graph::findsmallest(string & temp)
         }
     }
 }
-
-
 更新信息
-
 void inline Graph::updata_info(const string& min_name, int& count)
 {
     //vertex_list[min_name];
