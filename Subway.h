@@ -169,7 +169,6 @@ void Subway::printPath(const string& source, const string& destination) const
         cerr << "No such station '" << e.what() << "' exists." << endl;
         return;
     }
-    newGraph.dijkstra(source, destination);
     newGraph.print_path();
 }
 
