@@ -39,6 +39,16 @@ weight Graph::print_path(const string& source, const string& destination)
     dijkstra(source, destination);
     stack<pair<string, string>> path;
     string temp = destination;
+    if(vertex_list[destination].distance == INFINITE)
+    {
+        cout<< "No way"<<endl;
+        return INFINITE;
+    }
+    if(source == destination)
+    {
+        cout<< "Where are you going?"<<endl;
+        return 0;
+    }
     while(temp != source)
     {
         path.push(vertex_list[temp].path);
