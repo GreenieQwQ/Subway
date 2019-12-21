@@ -169,7 +169,7 @@ void Subway::printPath(const string& source, const string& destination) const
         cerr << "No such station '" << e.what() << "' exists." << endl;
         return;
     }
-    cout << "\nWeight: " <<  newGraph.print_path(source, destination) << endl;
+    cout << newGraph.print_path(source, destination) << endl;
 }
 
 bool Subway::contains(const string& name) const
