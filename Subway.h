@@ -37,22 +37,20 @@ public:
     void printPath(const string& source, const string& destination) const;
     bool contains(const string& name) const; //查询是否含有此条站点
 
-
 #ifndef DEBUG
 private:
 #else
 public:
 #endif
-    void initialize(istream& in = cin); //初始化
     void readData(istream& in = cin); //读取线路数据
     void generateGraph(); //生成原图 存入model中
     void generateNode(const string& name, Graph& g) const; //根据名字向图g加入新点 
     size_t findStation(const vector<station>& v, const string& name) const; //根据名字找到station在v中对应的index 找不到返回-1
 };
 
-void Subway::initialize(istream& in = cin)
+void Subway::initialize(istream& in)
 {
-    readData();
+    readData(in);
     generateGraph();
 }
 
@@ -75,7 +73,7 @@ void Subway::generateGraph()
     for(const auto& r :route) //对每一条线路
     {
         size_t length = 0; //记录路经长
-        string firstAxis; vector<string> firstRoute;
+        string Axis; //记录交点
         bool first = true; //第二个交点才连接
         for(const auto& s: r.second) //对线路的每一车站 记录交点和交点之间形成的边
         {
@@ -84,11 +82,13 @@ void Subway::generateGraph()
                 if(first) //第一次则记录下交点
                 {
                     first = false;
-                    firstAxis = s.name; 
-                    firstRoute = whichRoute[s.name];
+                    Axis = s.name; 
                 }
-                else //第二/n次则向图中增加邻边
-                    model.addAdjecnt(firstAxis, firstRoute, s.name, whichRoute[s.name], length);
+                else //第二/n次则向图中增加邻边 更新firstAxis
+                {
+                    model.addAdjecnt(Axis, s.name, length, r.first); //增加邻边——属于这条线
+                    Axis = s.name;
+                }    
 
                 length = s.distance; //从交点开始记录长度
             }
@@ -117,7 +117,7 @@ void Subway::generateNode(const string& name, Graph& g) const
             throw invalid_argument(name); //不存在这个站点
         vector<string> r = (*it).second; //获取对应路线---其实r肯定只有一个元素
 
-        const auto itr = route.find(r[0]);
+        const auto itr = route.find(r[0]); //r[0]为线路名字
         if(itr == route.end())
             throw runtime_error("Missing route.");
         const vector<station>& theRoute = (*itr).second;
@@ -135,7 +135,7 @@ void Subway::generateNode(const string& name, Graph& g) const
             length += distance; //在可能的记录前更新length
             if(axis.count(stationName)) //为交点
             {
-                g.addAdjecnt(name, r, stationName, (*whichRoute.find(stationName)).second, length);
+                g.addAdjecnt(name, stationName, length, r[0]); 
                 break; //只需要记录前一个交点即可
             }
         }
@@ -148,7 +148,7 @@ void Subway::generateNode(const string& name, Graph& g) const
             const size_t distance = theRoute[i].distance;
             if(axis.count(stationName)) //为交点
             {
-                g.addAdjecnt(name, r, stationName, (*whichRoute.find(stationName)).second, length);
+                g.addAdjecnt(name, stationName, length,  r[0]);
                 break; //只需要记录后一个交点即可
             }
             length += distance; //在可能的记录后才更新length
@@ -169,7 +169,7 @@ void Subway::printPath(const string& source, const string& destination) const
         cerr << "No such station '" << e.what() << "' exists." << endl;
         return;
     }
-    newGraph.print_path();
+    cout << "\nWeight: " <<  newGraph.print_path(source, destination) << endl;
 }
 
 bool Subway::contains(const string& name) const
