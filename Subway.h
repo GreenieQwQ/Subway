@@ -31,23 +31,26 @@ public:
     Graph model; //存储原图——仅包含交点
 
 public:
-    Subway(){ initialize(); }
+    Subway(){}
+    Subway(istream& in){ initialize(in); }
+    void initialize(istream& in = cin); //初始化
     void printPath(const string& source, const string& destination) const;
     bool contains(const string& name) const; //查询是否含有此条站点
+
 
 #ifndef DEBUG
 private:
 #else
 public:
 #endif
-    void initialize(); //初始化
+    void initialize(istream& in = cin); //初始化
     void readData(istream& in = cin); //读取线路数据
     void generateGraph(); //生成原图 存入model中
     void generateNode(const string& name, Graph& g) const; //根据名字向图g加入新点 
     size_t findStation(const vector<station>& v, const string& name) const; //根据名字找到station在v中对应的index 找不到返回-1
 };
 
-void Subway::initialize()
+void Subway::initialize(istream& in = cin)
 {
     readData();
     generateGraph();
@@ -57,7 +60,7 @@ void Subway::readData(istream& in)
 {
     string r, n;
     size_t dist;
-    while(in >> r >> n >> dist)
+    while(in >> r >> n >> dist && r != "Quit") //标准输入流输入Quit结束
     {
         route[r].push_back(station(n,dist));
         vector<string>& theRoute = whichRoute[n];
