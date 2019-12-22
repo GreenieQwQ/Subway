@@ -36,6 +36,28 @@ void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, cons
 
 weight Graph::print_path(const string& source, const string& destination)
 {
+    auto s1 = vertex_list.find(source);
+    auto s2 = vertex_list.find(destination);
+    if(s1 == s2 && s1==vertex_list.end())
+    {
+        cout<<"Both the source and destination do not exit."<<endl;
+        return WRONG_VERTEX;
+    }
+    if(s1==vertex_list.end())
+    {
+        cout<<"The source does not exit."<<endl;
+        return WRONG_VERTEX;
+    }
+    if(s2==vertex_list.end())
+    {
+        cout<<"The destination does not exit."<<endl;
+        return WRONG_VERTEX;
+    }
+    if(source == destination)
+    {
+        cout<< "Where are you going?"<<endl;
+        return WEIGHT_ZEOR;
+    }
     dijkstra(source, destination);
     stack<pair<string, string>> path;
     string temp = destination;
@@ -44,23 +66,25 @@ weight Graph::print_path(const string& source, const string& destination)
         cout<< "No way"<<endl;
         return INFINITE;
     }
-    if(source == destination)
-    {
-        cout<< "Where are you going?"<<endl;
-        return 0;
-    }
     while(temp != source)
     {
         path.push(vertex_list[temp].path);
         temp = path.top().first;
     }
+    bool out = false;
     cout<<"(src,"<<source<<")"<<" -> ";
     temp = path.top().second;
     path.pop();
     while(path.size()!=0)
     {
-        cout<<"("<<temp<<","<<path.top().first<<")"<<" -> ";
-        temp = path.top().second;
+        if(temp != path.top().second)
+            out = true;
+        if(out)
+        {
+            cout<<"("<<temp<<","<<path.top().first<<")"<<" -> ";
+            temp = path.top().second;
+        }
+        out = false;
         path.pop();
     }
     cout<<"("<<temp<<","<<destination<<")"<<endl;
@@ -96,6 +120,7 @@ void inline Graph::initial()
         x.second.label =  false;
         x.second.distance = INFINITE;
         x.second.path.first.clear();
+        x.second.path.second.clear();
     }
 }
 
@@ -128,15 +153,18 @@ void inline Graph::updata_info(const string& min_name, int& count)
         {
             if(y.distance + x.length < z.distance || z.distance == INFINITE)
             {
-                string temp;
                 z.distance = y.distance + x.length;
                 /*for(auto road1: z.road)
                 {
                     if(find(y.road.begin(), y.road.end(), road1) != y.road.end())
                         temp = road1;
                 }*/
-                temp = x.route;
-                z.path = pair<string, string>(min_name, temp);
+                z.path = pair<string, string>(min_name, x.route);
+            }
+            else if(y.distance + x.length == z.distance)
+            {
+                if(x.route == y.path.second)
+                    z.path.second = x.route;
             }
             count++;
         }

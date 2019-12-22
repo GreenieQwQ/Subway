@@ -10,6 +10,8 @@
 #include <stack>
 
 #define INFINITE -1
+#define WEIGHT_ZEOR 0
+#define WRONG_VERTEX -2
 
 using namespace std;
 
