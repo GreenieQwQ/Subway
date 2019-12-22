@@ -38,7 +38,7 @@ void printPathHead(const string& src, const string& dst)
 {
     printFrontPadding();
     cout << "==== 站点 '" << src << "' 到站点 '" << dst << "' 的路线为：\n"; 
-    cout << "====";
+    cout << "==== ";
 }
 
 string getSource()
