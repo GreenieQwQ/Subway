@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <stack>
+//#include <stack>
 
 #define INFINITE -1
 #define WEIGHT_ZEOR 0
@@ -41,6 +41,7 @@ class Graph
 {
 public:
     Graph() {}
+    void eraseVertex(const string& name);
     void addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route); //增加邻边 若没有点a/b则创建点a/b
     void eraseVertex(const string& name); //删除名字为name的站点
     size_t print_path(const string& source, const string& destination); //打印实际最短路径，格式：(起点,src) -> (线路,中间站点) -> (线路, dst) (坐哪条线路, 到哪个站)  返回路径的长度
@@ -53,6 +54,8 @@ private:
     void inline initial();
     void inline findsmallest(string& min_name);
     void inline updata_info(const string& min_name, int& count);
+    weight inline test_srcdes(const string& source, const string& destination, bool & mark);
+    weight inline print_pathin(const string& source, const string& destination);
 };
 
 /*void Graph::addAdjecnt(const string& nameA, const vector<string>& roadA, const string& nameB, const vector<string>& roadB, weight w)
