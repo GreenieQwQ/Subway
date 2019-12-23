@@ -2,6 +2,13 @@
 #define GRAPH_CPP
 #include "Graph.h"
 
+void Graph::eraseVertex(const string& name)
+{
+    auto x = vertex_list.find(name);
+    if(x != vertex_list.end())
+        vertex_list.erase(x);
+}
+
 void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route)
 {
     auto x = vertex_list.find(nameA);
@@ -36,59 +43,12 @@ void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, cons
 
 weight Graph::print_path(const string& source, const string& destination)
 {
-    auto s1 = vertex_list.find(source);
-    auto s2 = vertex_list.find(destination);
-    if(s1 == s2 && s1==vertex_list.end())
-    {
-        cout<<"Both the source and destination do not exit."<<endl;
-        return WRONG_VERTEX;
-    }
-    if(s1==vertex_list.end())
-    {
-        cout<<"The source does not exit."<<endl;
-        return WRONG_VERTEX;
-    }
-    if(s2==vertex_list.end())
-    {
-        cout<<"The destination does not exit."<<endl;
-        return WRONG_VERTEX;
-    }
-    if(source == destination)
-    {
-        cout<< "Where are you going?"<<endl;
-        return WEIGHT_ZEOR;
-    }
+    bool mark = true;
+    weight return_1 = test_srcdes(source, destination, mark);
+    if(!mark)
+        return return_1;
     dijkstra(source, destination);
-    stack<pair<string, string>> path;
-    string temp = destination;
-    if(vertex_list[destination].distance == INFINITE)
-    {
-        cout<< "No way"<<endl;
-        return INFINITE;
-    }
-    while(temp != source)
-    {
-        path.push(vertex_list[temp].path);
-        temp = path.top().first;
-    }
-    bool out = false;
-    cout<<"(src,"<<source<<")"<<" -> ";
-    temp = path.top().second;
-    path.pop();
-    while(path.size()!=0)
-    {
-        if(temp != path.top().second)
-            out = true;
-        if(out)
-        {
-            cout<<"("<<temp<<","<<path.top().first<<")"<<" -> ";
-            temp = path.top().second;
-        }
-        out = false;
-        path.pop();
-    }
-    cout<<"("<<temp<<","<<destination<<")"<<endl;
-    return vertex_list[destination].distance;
+    return print_pathin(source, destination);
 }
 
 void Graph::dijkstra(const string& source, const string& destination)
@@ -109,6 +69,10 @@ void Graph::dijkstra(const string& source, const string& destination)
         updata_info(min_name, count);
     }
 }
+
+
+
+
 
 /*
 初始化
@@ -169,5 +133,84 @@ void inline Graph::updata_info(const string& min_name, int& count)
             count++;
         }
     }
+}
+
+weight inline Graph::test_srcdes(const string& source, const string& destination, bool & mark)
+{
+    auto s1 = vertex_list.find(source);
+    auto s2 = vertex_list.find(destination);
+    if(s1 == s2 && s1==vertex_list.end())
+    {
+        cout<<"Both the source and destination do not exit."<<endl;
+        mark = false;
+        return WRONG_VERTEX;
+    }
+    if(s1==vertex_list.end())
+    {
+        cout<<"The source does not exit."<<endl;
+        mark = false;
+        return WRONG_VERTEX;
+    }
+    if(s2==vertex_list.end())
+    {
+        cout<<"The destination does not exit."<<endl;
+        mark = false;
+        return WRONG_VERTEX;
+    }
+    if(source == destination)
+    {
+        cout<< "Where are you going?"<<endl;
+        mark = false;
+        return WEIGHT_ZEOR;
+    }
+    if(vertex_list[destination].distance == INFINITE)
+    {
+        cout<< "No way"<<endl;
+        mark = false;
+        return INFINITE;
+    }
+}
+
+weight inline Graph::print_pathin(const string& source, const string& destination)
+{
+    vector<pair<string, string>> path;
+    string temp = destination;
+    while(temp != source)
+    {
+        path.push_back(vertex_list[temp].path);
+        temp = path.back().first;
+    }
+    /*for(auto x:path)
+        cout<<x.second<<endl;*/
+    bool out = true;
+    cout<<"(src,"<<source<<")"<<" -> ";
+    temp = path.back().second;
+    int i = path.size()-1;
+    while(i>0)
+    {
+        out = true;
+        for(int j=0; j<i; j++)
+        {
+            if(path[j].second == temp)
+            {
+                i = j-1;
+                out = false;
+                if(j)
+                {
+                    cout<<"("<<temp<<","<<path[i].first<<")"<<" -> ";
+                    temp = path[i].second;
+                }
+                break;
+            }
+        }
+        if(out)
+        {
+            cout<<"("<<temp<<","<<path[i].first<<")"<<" -> ";
+            i--;
+            temp = path[i].second;
+        }
+    }
+    cout<<"("<<temp<<","<<destination<<")"<<endl;
+    return vertex_list[destination].distance;
 }
 #endif
