@@ -5,8 +5,18 @@
 void Graph::eraseVertex(const string& name)
 {
     auto x = vertex_list.find(name);
-    if(x != vertex_list.end())  
-        vertex_list.erase(x);   
+    for(auto &y: (*x).second.adjcentList)
+    {
+        list<edge>& temp = vertex_list[y.name].adjcentList;
+        //vector<list<edge>::iterator> temp1;
+        for(auto itr = temp.begin(); itr!= temp.end(); itr++)
+        {
+            if((*itr).name == name)
+                temp.erase(itr);
+        }
+    }
+    if(x != vertex_list.end())
+        vertex_list.erase(x);
 }
 
 void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route)
@@ -48,6 +58,12 @@ weight Graph::print_path(const string& source, const string& destination)
     if(!mark)
         return return_1;
     dijkstra(source, destination);
+    if(vertex_list[destination].distance == INFINITE)
+    {
+        cout<< "不存在从起点到达目的地的线路。"<<endl;
+        mark = false;
+        return INFINITE;
+    }
     return print_pathin(source, destination);
 }
 
@@ -141,33 +157,27 @@ weight inline Graph::test_srcdes(const string& source, const string& destination
     auto s2 = vertex_list.find(destination);
     if(s1 == s2 && s1==vertex_list.end())
     {
-        cout<<"Both the source and destination do not exit."<<endl;
+        cout<<"终点和起点都不存在。"<<endl;
         mark = false;
         return WRONG_VERTEX;
     }
     if(s1==vertex_list.end())
     {
-        cout<<"The source does not exit."<<endl;
+        cout<<"起点不存在。"<<endl;
         mark = false;
         return WRONG_VERTEX;
     }
     if(s2==vertex_list.end())
     {
-        cout<<"The destination does not exit."<<endl;
+        cout<<"终点不存在。"<<endl;
         mark = false;
         return WRONG_VERTEX;
     }
     if(source == destination)
     {
-        cout<< "Where are you going?"<<endl;
+        cout<< "您已在目的地。"<<endl;
         mark = false;
         return WEIGHT_ZEOR;
-    }
-    if(vertex_list[destination].distance == INFINITE)
-    {
-        cout<< "No way"<<endl;
-        mark = false;
-        return INFINITE;
     }
 }
 
@@ -183,7 +193,7 @@ weight inline Graph::print_pathin(const string& source, const string& destinatio
     /*for(auto x:path)
         cout<<x.second<<endl;*/
     bool out = true;
-    cout<<"(src,"<<source<<")"<<" -> ";
+    cout<<"(起点,"<<source<<")"<<" -> ";
     temp = path.back().second;
     int i = path.size()-1;
     while(i>0)
@@ -205,8 +215,8 @@ weight inline Graph::print_pathin(const string& source, const string& destinatio
         }
         if(out)
         {
-            cout<<"("<<temp<<","<<path[i].first<<")"<<" -> ";
             i--;
+            cout<<"("<<temp<<","<<path[i].first<<")"<<" -> ";
             temp = path[i].second;
         }
     }

@@ -40,20 +40,11 @@ class Vertex
 class Graph
 {
 public:
-    enum State{ Start, End };  //End代表边指向终点方向 Start代表边指向起点方向
-    static map<string, pair<string, string>> routeEnd; //线路， <起点，终点>
-public:
     Graph() {}
-    void addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route, State s); 
-    /**
-     * 增加邻边 若没有点a/b则创建点a/b
-     * s = End 代表A->B方向为终点站方向
-     */
-    void eraseVertex(const string& name); //删除名字为name的站点
-    size_t print_path(const string& source, const string& destination);
-     /**
-      * 打印实际最短路径，格式：(起点,src) -> (线路,中间站点) -> (线路, dst) (坐哪条线路, 到哪个站)  返回路径的长度
-      */
+    void eraseVertex(const string& name);
+    void addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route); //增加邻边 若没有点a/b则创建点a/b
+    size_t print_path(const string& source, const string& destination); //打印路径 (src,v1) -> (1,V4) -> (1, v6) (哪条线路, 到哪个站)
+    //void dijkstra(const string& source, const string& destination);    
 private:
     int number_of_vertex;
     map<string, Vertex> vertex_list;
