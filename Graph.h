@@ -41,7 +41,7 @@ class Graph
 {
 public:
     Graph() {}
-    void eraseVertex(const string& name);
+    void eraseVertex(const string& name); //删除名字为name的站点
     void addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route); //增加邻边 若没有点a/b则创建点a/b
     size_t print_path(const string& source, const string& destination); //打印路径 (src,v1) -> (1,V4) -> (1, v6) (哪条线路, 到哪个站)
     //void dijkstra(const string& source, const string& destination);    
