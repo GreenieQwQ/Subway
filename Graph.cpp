@@ -5,8 +5,8 @@
 void Graph::eraseVertex(const string& name)
 {
     auto x = vertex_list.find(name);
-    if(x != vertex_list.end())
-        vertex_list.erase(x);
+    if(x != vertex_list.end())  
+        vertex_list.erase(x);   
 }
 
 void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route)
