@@ -4,61 +4,13 @@
 #include <fstream>
 using namespace std;
 
+//单元测试函数
 #define UNIX
 #ifdef UNIX
 #include <unistd.h>
 #else
 #include <windows.h>
 #endif
-
-void printFrontPadding()
-{
-    cout << "\n*********************\n";
-}
-
-void printEndPadding()
-{
-    cout << "*********************\n";
-}
-
-void printEnd()
-{
-    printFrontPadding();
-    cout << "感谢您使用本查询系统，再见！\n";
-    printEndPadding();
-}
-
-void printMissingStation()
-{
-    printFrontPadding();
-    cout << "此站点不存在哦，请输入正确的站点。\n";
-}
-
-
-void printPathHead(const string& src, const string& dst)
-{
-    printFrontPadding();
-    cout << "站点 '" << src << "' 到站点 '" << dst << "' 的路线为：\n"; 
-}
-
-string getSource()
-{
-    printFrontPadding();
-    cout << "欢迎来到广州地铁线路查询系统\n"
-         << "请输入出发的站点（输入quit退出本系统）：\n";
-    cout << "==== ";
-    string tmp; cin >> tmp;
-    return tmp;
-}
-
-string getDst()
-{
-    printFrontPadding();
-    cout << "请输入目的地站点（输入quit退出本系统，输入return返回出发站点的输入）：\n"
-         << "==== ";
-    string tmp; cin >> tmp;
-    return tmp;
-}
 
 enum STATE { CLEAR, DATA_ERROR };
 
