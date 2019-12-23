@@ -86,7 +86,7 @@ void Subway::generateGraph()
                 }
                 else //第二/n次则向图中增加邻边 更新firstAxis
                 {
-                    model.addAdjecnt(Axis, s.name, length, r.first); //增加邻边——属于这条线
+                    model.addAdjecnt(Axis, s.name, length, r.first, Graph::State::End); //增加邻边——属于这条线，指向终点站
                     Axis = s.name;
                 }    
 
@@ -135,7 +135,7 @@ void Subway::generateNode(const string& name, Graph& g) const
             length += distance; //在可能的记录前更新length
             if(axis.count(stationName)) //为交点
             {
-                g.addAdjecnt(name, stationName, length, r[0]); 
+                g.addAdjecnt(name, stationName, length, r[0], Graph::State::Start); //指向起点
                 break; //只需要记录前一个交点即可
             }
         }
@@ -148,7 +148,7 @@ void Subway::generateNode(const string& name, Graph& g) const
             const size_t distance = theRoute[i].distance;
             if(axis.count(stationName)) //为交点
             {
-                g.addAdjecnt(name, stationName, length,  r[0]);
+                g.addAdjecnt(name, stationName, length,  r[0], Graph::State::End); //指向终点站
                 break; //只需要记录后一个交点即可
             }
             length += distance; //在可能的记录后才更新length
