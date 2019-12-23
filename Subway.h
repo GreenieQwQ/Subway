@@ -18,17 +18,17 @@ private:
 #else
 public:
 #endif
-    const size_t INF = -1; //代表距离无穷
+    // const size_t INF = -1; //代表距离无穷
     struct station
     {
         string name;
         size_t distance; //到下一站的距离
         station(const string& n, size_t d): name(n), distance(d) {}
     };
-    map<string, vector<station>> route; //存储线路们    
+    map<string, vector<station>> route; //存储线路数据   
     map<string, vector<string>> whichRoute; //通过名字即可知道站点属于哪种线路 
     set<string> axis; //交点的集合
-    Graph model; //存储原图——仅包含交点
+    Graph model; //存储模型图——仅包含交点
 
 public:
     Subway(){}
@@ -58,7 +58,7 @@ void Subway::readData(istream& in)
 {
     string r, n;
     size_t dist;
-    while(in >> r >> n >> dist && r != "Quit") //标准输入流输入Quit结束
+    while(in >> r && r != "Quit" && in >> n >> dist) //标准输入流输入Quit结束
     {
         route[r].push_back(station(n,dist));
         vector<string>& theRoute = whichRoute[n];
