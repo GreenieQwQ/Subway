@@ -46,10 +46,11 @@ public:
     * 增加邻边AB，权值为w 若没有点a/b则创建点a/b
     * A2B为A到B的方向的名字
     */
-    void eraseVertex(const string& name); //删除名字为name的站点
-    void print_path(const string& source, const string& destination);
+    void eraseVertex(const string& name); //删除名字为name的站点 包括关联它的邻边
+    size_t print_path(const string& source, const string& destination);
     /**
     * 打印实际最短路径，格式：(起点,src) -> (线路,中间站点,乘坐方向) -> (线路, dst, 乘坐方向)
+    * 返回理论最短路径长
     */
 private:
     int number_of_vertex;
