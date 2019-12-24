@@ -45,7 +45,7 @@ string getSource()
 {
     printFrontPadding();
     cout << "====     欢迎来到广州地铁线路查询系统      ====\n"
-         << "==== 请输入出发的站点（输入quit退出本系统）====\n";
+         << "==== 请输入出发的站点（输入quit退出本系统，输入线路名打印线路所有站点）====\n";
     cout << "==== ";
     string tmp; cin >> tmp;
     return tmp;
@@ -54,7 +54,7 @@ string getSource()
 string getDst()
 {
     printFrontPadding();
-    cout << "==== 请输入目的地站点（输入quit退出本系统，输入return返回出发站点的输入）====\n"
+    cout << "==== 请输入目的地站点（输入quit退出本系统，输入return返回出发站点的输入，输入线路名打印线路所有站点）====\n"
          << "==== ";
     string tmp; cin >> tmp;
     return tmp;
@@ -77,17 +77,22 @@ int main()
     string src, dst;
     while( ( ( src = getSource() ) != "quit") && !src.empty() ) //empty代表读入失败
     {
-        if( !s.contains(src) )//不含有此站点
+        if( !s.containsStation(src) )//不含有此站点
         {
-            printMissingStation();
+            if(s.containsRoute(src))
+                s.printRoute(src);
+            else
+                printMissingStation();
             //s.matchSimilar(src) 为顾客匹配名字可能相符的站点
             continue;
-        }
+        } 
 
         while( ( ( dst = getDst() ) != "quit") && dst != "return" && !dst.empty() )
         {
-            if(s.contains(dst))
+            if(s.containsStation(dst))
                 break;
+            else if(s.containsRoute(dst)) //为路线打印路线
+                s.printRoute(dst);
             else
                 printMissingStation();
         }

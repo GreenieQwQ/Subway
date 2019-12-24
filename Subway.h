@@ -26,8 +26,8 @@ public:
         station(const string& n, size_t d): name(n), distance(d) {}
     };
     map<string, vector<station>> route; //存储线路数据   
-    map<string, vector<string>> whichRoute; //通过名字即可知道站点属于哪种线路 
-    set<string> axis; //交点的集合
+    map<string, vector<string>> whichRoute; //通过名字即可知道站点属于哪种线路
+    set< string > axis; //交点的集合
     mutable Graph model; //存储模型图——仅包含交点 在查询函数需要对模型图进行修改
 
 public:
@@ -35,8 +35,19 @@ public:
     Subway(istream& in){ initialize(in); }
     void initialize(istream& in = cin); //初始化
     void printPath(const string& source, const string& destination) const;
-    bool contains(const string& name) const; //查询是否含有此条站点
+    void printRoute(const string& r) const; //打印线路
 
+    inline bool containsStation(const string& name) const //查询是否含有此条站点
+    {
+        auto it = whichRoute.find(name);
+        return !(it == whichRoute.end());
+    }
+    bool containsRoute(const string& r) const
+    {
+        auto it = route.find(r);
+        return !(it == route.end());
+    }
+ 
 #ifndef DEBUG
 private:
 #else
@@ -46,6 +57,10 @@ public:
     void generateGraph(); //生成原图 存入model中
     bool generateNode(const string& name, Graph& g) const; //根据名字向图g加入新点 
     size_t findStation(const vector<station>& v, const string& name) const; //根据名字找到station在v中对应的index 找不到返回-1
+    inline auto getRoute(const string& r) const 
+    {
+        return route.find(r);
+    } //返回对应r名字的线路
 };
 
 void Subway::initialize(istream& in)
@@ -189,10 +204,14 @@ void Subway::printPath(const string& source, const string& destination) const
         model.eraseVertex(destination); 
 }
 
-bool Subway::contains(const string& name) const
+void Subway::printRoute(const string& r) const
 {
-    auto it = whichRoute.find(name);
-    return !(it == whichRoute.end());
+    auto it = getRoute(r);
+    const vector<station>& theRoute = (*it).second;
+
+    cout << "==== " << r << "线路：" << endl;
+    for(int i = 0; i < theRoute.size(); ++i)
+        cout << "==== " << theRoute[i].name << endl;
 }
 
 #endif
