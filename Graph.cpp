@@ -4,10 +4,17 @@
 
 void Graph::eraseVertex(const string& name)
 {
-    auto x = vertex_list.find(name);
-    for(auto &y: (*x).second.adjcentList)
+    if(vertex_list.find(name)!=vertex_list.end())
+        vertex_list.erase(name);
+    for(auto &x: vertex_list)
     {
-        list<edge>& temp = vertex_list[y.name].adjcentList;
+        if(x.second.adjcentList.find(name)!=x.second.adjcentList.end())
+            x.second.adjcentList.erase(name);
+    }
+    /*auto x = vertex_list.find(name);
+    for(auto y: (*x).second.adjcentList)
+    {
+        list<edge>& temp = vertex_list[y.first].adjcentList;
         //vector<list<edge>::iterator> temp1;
         for(auto itr = temp.begin(); itr!= temp.end(); itr++)
         {
@@ -17,23 +24,36 @@ void Graph::eraseVertex(const string& name)
     }
     if(x != vertex_list.end())
         vertex_list.erase(x);
+    number_of_vertex--;*/
 }
 
-void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route)
+void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route,
+                       const string& A2B, const string& B2A)
 {
     auto x = vertex_list.find(nameA);
     if(x==vertex_list.end())
     {
         Vertex temp;
         temp.name = nameA;
-        //temp.road = roadA;
-        temp.adjcentList.push_back(edge(nameB, route, w));
+        temp.adjcentList.insert(pair<string, edge>(nameB, edge(nameB, w, A2B)));
+        temp.adjcentList[nameB].route.push_back(route);
         vertex_list.insert(pair<string, Vertex>(nameA, temp));
         number_of_vertex++;
     }
     else
     {
-        (*x).second.adjcentList.push_back(edge(nameB, route, w));
+        auto y = (*x).second.adjcentList.find(nameB);
+        if(y != (*x).second.adjcentList.end())
+            (*x).second.adjcentList[nameB].route.push_back(route);
+        else
+        {
+            edge temp;
+            temp.name = nameB;
+            temp.length = w;
+            temp.route.push_back(route);
+            temp.direction = A2B;
+            (*x).second.adjcentList.insert(pair<string,edge>(nameB,temp));
+        }
     }
     x = vertex_list.find(nameB);
     if(x==vertex_list.end())
@@ -41,13 +61,25 @@ void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, cons
         Vertex temp;
         temp.name = nameB;
         //temp.road = roadB;
-        temp.adjcentList.push_back(edge(nameA, route, w));
+        temp.adjcentList.insert(pair<string, edge>(nameA, edge(nameA, w, B2A)));
+        temp.adjcentList[nameA].route.push_back(route);
         vertex_list.insert(pair<string, Vertex>(nameB, temp));
         number_of_vertex++;
     }
     else
     {
-        (*x).second.adjcentList.push_back(edge(nameA, route, w));
+        auto y = (*x).second.adjcentList.find(nameA);
+        if(y != (*x).second.adjcentList.end())
+            (*x).second.adjcentList[nameA].route.push_back(route);
+        else
+        {
+            edge temp;
+            temp.name = nameA;
+            temp.length = w;
+            temp.route.push_back(route);
+            temp.direction = B2A;
+            (*x).second.adjcentList.insert(pair<string,edge>(nameA,temp));
+        }
     }
 }
 
@@ -81,6 +113,7 @@ void Graph::dijkstra(const string& source, const string& destination)
             count--;
             continue;
         }
+        count--;
         vertex_list[min_name].label = true;
         updata_info(min_name, count);
     }
@@ -99,8 +132,9 @@ void inline Graph::initial()
     {
         x.second.label =  false;
         x.second.distance = INFINITE;
-        x.second.path.first.clear();
-        x.second.path.second.clear();
+        x.second.path.fathername.clear();
+        x.second.path.fathertome.clear();
+        x.second.path.route.clear();
     }
 }
 
@@ -115,6 +149,7 @@ void inline Graph::findsmallest(string & temp)
         if(x.second.distance != INFINITE && (min > x.second.distance || min==INFINITE)&& x.second.label==false)
         {
             temp = x.first;
+            min = x.second.distance;
         }
     }
 }
@@ -128,23 +163,19 @@ void inline Graph::updata_info(const string& min_name, int& count)
     auto &y = vertex_list[min_name];
     for(auto x: y.adjcentList)
     {
-        auto &z  = vertex_list[x.name];
+        auto &z  = vertex_list[x.second.name];
         if(z.label == false)
         {
-            if(y.distance + x.length < z.distance || z.distance == INFINITE)
+            if(y.distance + x.second.length < z.distance || z.distance == INFINITE)
             {
-                z.distance = y.distance + x.length;
+                z.distance = y.distance + x.second.length;
                 /*for(auto road1: z.road)
                 {
                     if(find(y.road.begin(), y.road.end(), road1) != y.road.end())
                         temp = road1;
                 }*/
-                z.path = pair<string, string>(min_name, x.route);
-            }
-            else if(y.distance + x.length == z.distance)
-            {
-                if(x.route == y.path.second)
-                    z.path.second = x.route;
+                z.path = Path(min_name, x.second.direction);
+                z.path.route = x.second.route;
             }
             count++;
         }
@@ -183,32 +214,77 @@ weight inline Graph::test_srcdes(const string& source, const string& destination
 
 weight inline Graph::print_pathin(const string& source, const string& destination)
 {
-    vector<pair<string, string>> path;
+    vector<Path> path;
+    vector<string> route1;
     string temp = destination;
+    string temp1;
     while(temp != source)
     {
         path.push_back(vertex_list[temp].path);
-        temp = path.back().first;
+        temp = path.back().fathername;
     }
-    /*for(auto x:path)
-        cout<<x.second<<endl;*/
+    if(path.size()>1){
+    temp = initial_route(path[0],path[1]);
+    if(temp.size())
+    {
+        route1.push_back(temp);
+        route1.push_back(temp);
+    }
+    else
+    {
+        route1.push_back(path[0].route[0]);
+        route1.push_back(path[1].route[0]);
+    }
+    for(int i=2; i<path.size()-2; i++)
+        route1.push_back(path[i].route[0]);
+    temp = initial_route(path[path.size()-2],path[path.size()-1]);
+    /*for(auto x: path[path.size()-2].route)
+    {
+        cout<<x<<endl;
+        cout<<path[path.size()-2].fathername<<endl;
+    }
+    for(auto x: path[path.size()-1].route)
+    {
+        cout<<x<<endl;
+        cout<<path[path.size()-1].fathername<<endl;
+    }*/
+    if(temp.size())
+    {
+        route1.push_back(temp);
+        route1.push_back(temp);
+    }
+    else
+    {
+        route1.push_back(path[path.size()-2].route[0]);
+        route1.push_back(path.back().route[0]);
+    }}
+    else
+    {
+        for(int i=0; i<path.size(); i++)
+        route1.push_back(path[i].route[0]);
+    }
+    
+
+
     bool out = true;
     cout<<"(起点,"<<source<<")"<<" -> ";
-    temp = path.back().second;
+    temp = route1.back();
+    temp1 = path.back().fathertome;
     int i = path.size()-1;
     while(i>0)
     {
         out = true;
         for(int j=0; j<i; j++)
         {
-            if(path[j].second == temp)
+            if(route1[j] == temp)
             {
                 i = j-1;
                 out = false;
                 if(j)
                 {
-                    cout<<"("<<temp<<","<<path[i].first<<")"<<" -> ";
-                    temp = path[i].second;
+                   cout<<"("<<temp<<","<<temp1<<","<<path[i].fathername<<")"<<" -> ";
+                   temp = route1[i];
+                   temp1 = path[i].fathertome;
                 }
                 break;
             }
@@ -216,11 +292,27 @@ weight inline Graph::print_pathin(const string& source, const string& destinatio
         if(out)
         {
             i--;
-            cout<<"("<<temp<<","<<path[i].first<<")"<<" -> ";
-            temp = path[i].second;
+            cout<<"("<<temp<<","<<temp1<<","<<path[i].fathername<<")"<<" -> ";
+            temp = route1[i];
+            temp1 = path[i].fathertome;
         }
     }
-    cout<<"("<<temp<<","<<destination<<")"<<endl;
+    cout<<"("<<temp<<","<<temp1<<","<<destination<<")"<<endl;
     return vertex_list[destination].distance;
+}
+
+string inline Graph:: initial_route(Path& a, Path& b)
+{
+    string temp;
+    for(auto x:a.route)
+        for(auto y:b.route)
+        {
+            if(x==y)
+            {
+                temp = x;
+                return x;
+            }
+        }
+    return temp;
 }
 #endif
