@@ -28,7 +28,7 @@ public:
     map<string, vector<station>> route; //存储线路数据   
     map<string, vector<string>> whichRoute; //通过名字即可知道站点属于哪种线路 
     set<string> axis; //交点的集合
-    mutable Graph model; //存储模型图——仅包含交点 在查询函数也改变值
+    mutable Graph model; //存储模型图——仅包含交点 在查询函数需要对模型图进行修改
 
 public:
     Subway(){}
