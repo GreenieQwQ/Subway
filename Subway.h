@@ -28,7 +28,7 @@ public:
     map<string, vector<station>> route; //存储线路数据   
     map<string, vector<string>> whichRoute; //通过名字即可知道站点属于哪种线路 
     set<string> axis; //交点的集合
-    Graph model; //存储模型图——仅包含交点
+    mutable Graph model; //存储模型图——仅包含交点 在查询函数也改变值
 
 public:
     Subway(){}
@@ -44,7 +44,7 @@ public:
 #endif
     void readData(istream& in = cin); //读取线路数据
     void generateGraph(); //生成原图 存入model中
-    void generateNode(const string& name, Graph& g) const; //根据名字向图g加入新点 
+    bool generateNode(const string& name, Graph& g) const; //根据名字向图g加入新点 
     size_t findStation(const vector<station>& v, const string& name) const; //根据名字找到station在v中对应的index 找不到返回-1
 };
 
@@ -111,7 +111,7 @@ size_t Subway::findStation(const vector<station>& v, const string& name) const
     return -1;
 }
 
-void Subway::generateNode(const string& name, Graph& g) const
+bool Subway::generateNode(const string& name, Graph& g) const
 {
     if(!axis.count(name)) //若不为交点 才需加入图中
     {
@@ -159,23 +159,34 @@ void Subway::generateNode(const string& name, Graph& g) const
             }
             length += distance; //在可能的记录后才更新length
         }
+        return true; //向模板图增加点
     }
+
+    return false; //不向模板图增加点
 }
 
 void Subway::printPath(const string& source, const string& destination) const
 {
-    Graph newGraph = model; // 拷贝模板图
+    bool isAddsrc = false;
+    bool isAddDst = false;
+
     try
     {
-        generateNode(source, newGraph);
-        generateNode(destination, newGraph);
+        isAddsrc = generateNode(source, model);
+        isAddDst = generateNode(destination, model);
     }
     catch(invalid_argument& e)
     {
         cerr << "No such station '" << e.what() << "' exists." << endl;
         return;
     }
-    newGraph.print_path(source, destination);
+    model.print_path(source, destination);
+
+    if(isAddsrc)
+        model.eraseVertex(source); //把添加的点从模板图删除
+    
+    if(isAddDst)
+        model.eraseVertex(destination); 
 }
 
 bool Subway::contains(const string& name) const
