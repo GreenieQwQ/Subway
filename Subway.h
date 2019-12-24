@@ -72,6 +72,9 @@ void Subway::generateGraph()
 {
     for(const auto& r :route) //对每一条线路
     {
+        const string start = r.second.at(0).name; //起点站
+        const string end = r.second.at(r.second.size()-1).name; //终点站
+        
         size_t length = 0; //记录路经长
         string Axis; //记录交点
         bool first = true; //第二个交点才连接
@@ -86,7 +89,7 @@ void Subway::generateGraph()
                 }
                 else //第二/n次则向图中增加邻边 更新firstAxis
                 {
-                    model.addAdjecnt(Axis, s.name, length, r.first, Graph::State::End); //增加邻边——属于这条线，指向终点站
+                    model.addAdjecnt(Axis, s.name, length, r.first, end, start); //增加邻边——属于这条线，指向终点站
                     Axis = s.name;
                 }    
 
@@ -122,6 +125,9 @@ void Subway::generateNode(const string& name, Graph& g) const
             throw runtime_error("Missing route.");
         const vector<station>& theRoute = (*itr).second;
 
+        const string start = theRoute[0].name; //起点站
+        const string end = theRoute[theRoute.size()-1].name; //终点站
+
         size_t pos = findStation(theRoute, name);
         if(pos == -1)
             throw runtime_error("Missing station.");
@@ -135,7 +141,7 @@ void Subway::generateNode(const string& name, Graph& g) const
             length += distance; //在可能的记录前更新length
             if(axis.count(stationName)) //为交点
             {
-                g.addAdjecnt(name, stationName, length, r[0], Graph::State::Start); //指向起点
+                g.addAdjecnt(name, stationName, length, r[0], start, end); //指向起点
                 break; //只需要记录前一个交点即可
             }
         }
@@ -148,7 +154,7 @@ void Subway::generateNode(const string& name, Graph& g) const
             const size_t distance = theRoute[i].distance;
             if(axis.count(stationName)) //为交点
             {
-                g.addAdjecnt(name, stationName, length,  r[0], Graph::State::End); //指向终点站
+                g.addAdjecnt(name, stationName, length, r[0], end, start); //指向终点站
                 break; //只需要记录后一个交点即可
             }
             length += distance; //在可能的记录后才更新length
