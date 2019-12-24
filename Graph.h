@@ -21,6 +21,7 @@ struct edge
 {
     string name;
     string route;
+    string direction;
     weight length;
     edge(const string& name1, const string& route1, const weight& length1):name(name1),route(route1),length(length1)
     {}
@@ -30,7 +31,6 @@ class Vertex
 {
     public:
     string name;
-    //vector<string> road; //所属线路
     list<edge> adjcentList;
     bool label;
     weight distance;
@@ -40,14 +40,18 @@ class Vertex
 class Graph
 {
 public:
-    enum State{ Start, End };  //End代表边指向终点方向 Start代表边指向起点方向
-    static map<string, pair<string, string>> routeEnd; //线路， <起点，终点>
-public:
     Graph() {}
-    void eraseVertex(const string& name); //删除名字为name的站点
-    void addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route); //增加邻边 若没有点a/b则创建点a/b
-    size_t print_path(const string& source, const string& destination); //打印路径 (src,v1) -> (1,V4) -> (1, v6) (哪条线路, 到哪个站)
-    //void dijkstra(const string& source, const string& destination);    
+    void addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route, const string& A2B, const string& B2A); 
+    /**
+    * 增加邻边AB，权值为w 若没有点a/b则创建点a/b
+    * A2B为A到B的方向的名字
+    */
+    void eraseVertex(const string& name); //删除名字为name的站点 包括关联它的邻边
+    size_t print_path(const string& source, const string& destination);
+    /**
+    * 打印实际最短路径，格式：(起点,src) -> (线路,中间站点,乘坐方向) -> (线路, dst, 乘坐方向)
+    * 返回理论最短路径长
+    */
 private:
     int number_of_vertex;
     map<string, Vertex> vertex_list;
