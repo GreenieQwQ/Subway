@@ -72,8 +72,8 @@ void Subway::generateGraph()
 {
     for(const auto& r :route) //对每一条线路
     {
-        const string start = r.second.at(0).name; //起点站
-        const string end = r.second.at(r.second.size()-1).name; //终点站
+        const string start = r.second.at(0).name + "方向"; //起点站方向
+        const string end = r.second.at(r.second.size()-1).name + "方向"; //终点站方向
         
         size_t length = 0; //记录路经长
         string Axis; //记录交点
@@ -125,8 +125,8 @@ void Subway::generateNode(const string& name, Graph& g) const
             throw runtime_error("Missing route.");
         const vector<station>& theRoute = (*itr).second;
 
-        const string start = theRoute[0].name; //起点站
-        const string end = theRoute[theRoute.size()-1].name; //终点站
+        const string start = theRoute[0].name + "方向"; //起点站方向
+        const string end = theRoute[theRoute.size()-1].name + "方向"; //终点站方向
 
         size_t pos = findStation(theRoute, name);
         if(pos == -1)
