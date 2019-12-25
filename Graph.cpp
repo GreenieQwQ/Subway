@@ -11,20 +11,6 @@ void Graph::eraseVertex(const string& name)
         if(x.second.adjcentList.find(name)!=x.second.adjcentList.end())
             x.second.adjcentList.erase(name);
     }
-    /*auto x = vertex_list.find(name);
-    for(auto y: (*x).second.adjcentList)
-    {
-        list<edge>& temp = vertex_list[y.first].adjcentList;
-        //vector<list<edge>::iterator> temp1;
-        for(auto itr = temp.begin(); itr!= temp.end(); itr++)
-        {
-            if((*itr).name == name)
-                temp.erase(itr);
-        }
-    }
-    if(x != vertex_list.end())
-        vertex_list.erase(x);
-    number_of_vertex--;*/
 }
 
 void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, const string& route,
@@ -60,7 +46,6 @@ void Graph::addAdjecnt(const string& nameA, const string& nameB,  weight w, cons
     {
         Vertex temp;
         temp.name = nameB;
-        //temp.road = roadB;
         temp.adjcentList.insert(pair<string, edge>(nameA, edge(nameA, w, B2A)));
         temp.adjcentList[nameA].route.push_back(route);
         vertex_list.insert(pair<string, Vertex>(nameB, temp));
@@ -159,7 +144,6 @@ void inline Graph::findsmallest(string & temp)
 */
 void inline Graph::updata_info(const string& min_name, int& count)
 {
-    //vertex_list[min_name];
     auto &y = vertex_list[min_name];
     for(auto x: y.adjcentList)
     {
@@ -169,11 +153,6 @@ void inline Graph::updata_info(const string& min_name, int& count)
             if(y.distance + x.second.length < z.distance || z.distance == INFINITE)
             {
                 z.distance = y.distance + x.second.length;
-                /*for(auto road1: z.road)
-                {
-                    if(find(y.road.begin(), y.road.end(), road1) != y.road.end())
-                        temp = road1;
-                }*/
                 z.path = Path(min_name, x.second.direction);
                 z.path.route = x.second.route;
             }
@@ -238,16 +217,6 @@ weight inline Graph::print_pathin(const string& source, const string& destinatio
     for(int i=2; i<path.size()-2; i++)
         route1.push_back(path[i].route[0]);
     temp = initial_route(path[path.size()-2],path[path.size()-1]);
-    /*for(auto x: path[path.size()-2].route)
-    {
-        cout<<x<<endl;
-        cout<<path[path.size()-2].fathername<<endl;
-    }
-    for(auto x: path[path.size()-1].route)
-    {
-        cout<<x<<endl;
-        cout<<path[path.size()-1].fathername<<endl;
-    }*/
     if(temp.size())
     {
         route1.push_back(temp);
